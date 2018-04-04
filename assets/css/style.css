@@ -1,7 +1,25 @@
 body {
-    background-image: url("../images/daniel-cheung-129839-unsplash.jpg");
+    /* background-image: url("../images/daniel-cheung-129839-unsplash.jpg");
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: cover; */
     text-align: center;
     font-family: 'Berkshire Swash', cursive;
+}
+
+.characters {
+    width: 150px;
+    height: 150px;
+}
+
+h6 {
+    font-size: 14px;
+}
+
+/* #urCharacter {
+    border: 1px solid red;
+} */
+
+#fytBtn{
+    position: relative;
+    top: 100px;
 }

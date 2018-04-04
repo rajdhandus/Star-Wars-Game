@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Star Wars RPG Game</title>
-    <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
         crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Berkshire+Swash" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="./assets/css/style.css">
     <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
@@ -19,10 +19,103 @@
     <h1>Star Wars RPG</h1>
     <div class="container">
         <div class="row">
-            <h2>Choose your character</h2>
+            <h2 id="titleLetter">Choose your character</h2>
+        </div>
+        <div class="row">
+            <div class="card backstage col-xs-3">
+                <h5 class="card-header">Obi-Wan Kenobi</h5>
+                <img class="card-img-top img-thumbnail img-responsive characters" src="./assets/images/obi.jpg" alt="">
+                <div class="card-body">
+                    <!-- <h5 class="card-title">Obi-Wan Kenobi</h5> -->
+                    <p class="card-text">120 Health Points</p>
+                    <a href="#" id="obiBtn" class="btn btn-primary">Choose</a>
+                </div>
+            </div>
+            <div class="card backstage col-xs-3">
+                <h5 class="card-header">Luke Skywalker</h5>
+
+                <img class="card-img-top img-thumbnail img-responsive characters" src="./assets/images/luke.jpg" alt="">
+                <div class="card-body">
+                    <!-- <h5 class="card-title">Luke Skywalker</h5> -->
+                    <p class="card-text">100 Health Points</p>
+                    <a href="#" id="lukeBtn" class="btn btn-primary">Choose</a>
+                </div>
+            </div>
+            <div class="card backstage col-xs-3">
+                <h5 class="card-header">Darth Sidious</h5>
+                <img class="card-img-top img-thumbnail img-responsive characters" src="./assets/images/darth-s.png" alt="">
+                <div class="card-body">
+                    <!-- <h5 class="card-title">Darth Sidious</h5> -->
+                    <p class="card-text">150 Health Points</p>
+                    <a href="#" id="sidiousBtn" class="btn btn-primary">Choose</a>
+                </div>
+            </div>
+            <div class="card backstage col-xs-3">
+                <h5 class="card-header">Darth Maul</h5>
+                <img class="card-img-top img-thumbnail img-responsive characters" src="./assets/images/darth-m.jpeg" alt="">
+                <div class="card-body">
+                    <!-- <h5 class="card-title">Darth Maul</h5> -->
+                    <p class="card-text">180 Health Points</p>
+                    <a href="#" id="maulBtn" class="btn btn-primary">Choose</a>
+                </div>
+            </div>
+        </div>
+        <!--<div class="row">
+            <div class="col-xs-6" id="urCharacterLabel">
+                <div id="urCharacterLabel"></div>
+                 placeholder for inseting image after  user selects it 
+            </div>
+            <div class="col-xs-4" id="">
+            </div>
+            <div class="col-xs-6" id="enemyCharacterLabel">
+                <div id="enemyCharacterLabel"></div>
+                 placeholder for inseting image after  user selects it 
+            </div>
+        </div>-->
+        <br>
+        <br>
+        <br>
+        <br>
+        <div class="row">
+            <div id="urCharacter">
+                <!-- placeholder for inseting image after  user selects it -->
+            </div>
+            <div id="fytBtnCtnr" class="col-xs-4">
+                <!-- placeholder for inseting image after  user selects it -->
+            </div>
+            <div id="enemyCharacter">
+                <!-- placeholder for inseting image after  user selects it -->
+            </div>
         </div>
     </div>
 
 </body>
+<script>
+
+    var yourCharChosen = false;
+
+    $("a").on("click", function (event) {
+        if (!yourCharChosen) {
+            //choosing your character
+            $(this).toggleClass("disabled", true);
+            $("#urCharacter").append($(this).parent().parent().removeClass("backstage").addClass("col-xs-4").removeClass("col-xs-3"));
+            $("#titleLetter").text("Choose enemy character");
+            $(".backstage").addClass("col-xs-4").removeClass("col-xs-3");
+            $(this).replaceWith("<div id=\"urCharacterLabel\">Your Character<div>");
+            yourCharChosen = true;
+        }
+        else {
+            //choosing enemy character
+            $(this).toggleClass("disabled", true);
+            $(this).parent().parent().removeClass("backstage");
+            $("#enemyCharacter").append($(this).parent().parent());
+            $(".backstage").addClass("col-xs-6").removeClass("col-xs-4");
+            $(this).replaceWith("<div id=\"enemyCharacterLabel\">Your Enemy<div>");
+            $(".backstage a").toggleClass("disabled", true);
+            $("#titleLetter").text("Fight!");
+            $("#fytBtnCtnr").append("<a id=\"fytBtn\" class=\"btn btn-danger\">Fight</a>");
+        }
+    });
+</script>
 
 </html>
