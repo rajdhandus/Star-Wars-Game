@@ -57,18 +57,18 @@ function fight() {
   logEveryonesHealth();
   displayHealthPoints(urHP,enemyHP);
 
-  
+
 
   if (enemyHP <= 0) {
     //Enemy has lost
 
     var lastEnemyName = $("#enemyCharacter").children().children("h5").text();
-    
+
     $("#enemyCharacter").children().remove();
 
       if(fightRound<2) {
         $("#textResultCtnr").html("<div id=\"textResult\">You have defeated "+ lastEnemyName +"</div>"+
-      "</div><div id=\"textResult\">Choose your next enemy</div>");
+      "</div><div id=\"textResult\">Choose your next enemy</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div>");
       }
       else {
         $("#textResultCtnr").html("<div id=\"textResult\">You have defeated "+ lastEnemyName +"</div>"+
@@ -78,7 +78,7 @@ function fight() {
         window.location.reload();
       });
       }
-      
+
 
       $(".backstage a").toggleClass("disabled", false);
 
@@ -96,7 +96,7 @@ function fight() {
     });
 
       toggleFightBtn(true);
-  }  
+  }
 }
 
 $("a").on("click", function(event) {
@@ -140,5 +140,3 @@ $("a").on("click", function(event) {
     $(".backstage a").toggleClass("disabled", true);
   }
 });
-
-
