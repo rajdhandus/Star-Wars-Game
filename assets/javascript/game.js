@@ -72,7 +72,7 @@ function fight() {
       }
       else {
         $("#textResultCtnr").html("<div id=\"textResult\">You have defeated "+ lastEnemyName +"</div>"+
-      "</div><div id=\"textResult\">Game Over!! You have Won!!</div>"+
+      "</div><div id=\"textResult\">Game Over!! You have Won!!</div><br>"+
       "<button id=\"newGameBtn\" class=\"btn btn-primary\">"+"New Game</button>");
       $("#newGameBtn").on("click", function(){
         window.location.reload();
