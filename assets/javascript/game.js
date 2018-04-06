@@ -1,109 +1,85 @@
 var yourCharChosen = false;
 var fightRound = 0;
 
-function resetEnemyPoints() {
-  enemyCntrAttackPwr = $("#enemyCharacter")
-    .children()
-    .children("h5")
-    .data("counter-attack-power");
+var urHP = 0;
+var urBaseAttackPwr = 0;
+var enemyCntrAttackPwr = 0;
+var enemyHP = 0;
 
-    console.log($("#enemyCharacter")
-    .children()
-    .children("h5"));
+function resetPoints() {
+  urHP = $("#urCharacter").children().children("h5").data("health-points");
+  urBaseAttackPwr = $("#urCharacter").children().children("h5").data("base-attack-power");
+  enemyCntrAttackPwr = $("#enemyCharacter").children().children("h5").data("counter-attack-power");
+  enemyHP = $("#enemyCharacter").children().children("h5").data("health-points");
+}
 
-  enemyHP = $("#enemyCharacter")
-    .children()
-    .children("h5")
-    .data("health-points");
+function displayHealthPoints() {
+  $("#textResultCtnr").html("<div id=\"textResult\">"+"Your health is "+urHP+
+  "</div><div id=\"textResult\">"+"Enemy health is "+enemyHP+"</div>");
+}
 
-
-  console.log("************ Resetting Enemy Points ***************");
+function logEveryonesHealth() {
+  console.log("Your health is " + urHP);
+  console.log("Your Base Attack Power is " + urBaseAttackPwr);
   console.log("Enemy Attack Power is " + enemyCntrAttackPwr);
   console.log("Enemy Health Power is " + enemyHP);
 }
 
 function fight() {
-  var urHP = $("#urCharacter")
-    .children()
-    .children("h5")
-    .data("health-points");
-  var urBaseAttackPwr = $("#urCharacter")
-    .children()
-    .children("h5")
-    .data("base-attack-power");
-  var enemyCntrAttackPwr = $("#enemyCharacter")
-    .children()
-    .children("h5")
-    .data("counter-attack-power");
-  var enemyHP = $("#enemyCharacter")
-    .children()
-    .children("h5")
-    .data("health-points");
 
   console.log("************ Before deduction ***************");
-  console.log("Your health is " + urHP);
-  console.log("Your Base Attack Power is " + urBaseAttackPwr);
-  console.log("Enemy Attack Power is " + enemyCntrAttackPwr);
-  console.log("Enemy Health Power is " + enemyHP);
+  logEveryonesHealth();
 
-  $("#urCharacter")
-    .children()
-    .children("h5")
-    .data("health-points", urHP - enemyCntrAttackPwr);
-  $("#enemyCharacter")
-    .children()
-    .children("h5")
-    .data("health-points", enemyHP - urBaseAttackPwr);
-  $("#urCharacter")
-    .children()
-    .children("h5")
-    .data("base-attack-power", urBaseAttackPwr * 2);
+  $("#urCharacter").children().children("h5").data("health-points", urHP - enemyCntrAttackPwr);
+  $("#enemyCharacter").children().children("h5").data("health-points", enemyHP - urBaseAttackPwr);
+  $("#urCharacter").children().children("h5").data("base-attack-power", urBaseAttackPwr + urBaseAttackPwr);
 
-  urHP = $("#urCharacter")
-    .children()
-    .children("h5")
-    .data("health-points");
-  urBaseAttackPwr = $("#urCharacter")
-    .children()
-    .children("h5")
-    .data("base-attack-power");
-  enemyCntrAttackPwr = $("#enemyCharacter")
-    .children()
-    .children("h5")
-    .data("counter-attack-power");
-  enemyHP = $("#enemyCharacter")
-    .children()
-    .children("h5")
-    .data("health-points");
-
+  resetPoints();
   console.log("************ After deduction ***************");
-
-  console.log("Your health is " + urHP);
-  console.log("Your Base Attack Power is " + urBaseAttackPwr);
-  console.log("Enemy Attack Power is " + enemyCntrAttackPwr);
-  console.log("Enemy Health Power is " + enemyHP);
-
-  $("#textResultCtnr").html("<div id=\"textResult\">"+"Your health is "+urHP+
-  "</div><div id=\"textResult\">"+"Enemy health is "+enemyHP+"</div>");
+  logEveryonesHealth();
+  displayHealthPoints(urHP,enemyHP);
 
   
 
   if (urHP <= 0) {
     //You have lost
-    $("#urCharacter")
-      .child()
-      .remove();
+
+    $("#textResultCtnr").html("<div id=\"textResult\">You have lost</div>"+
+    "<button id=\"newGameBtn\" class=\"btn btn-primary\">"+"New Game</button>");
+
+    $("#newGameBtn").on("click", function(){
+      window.location.reload();
+    });
+
       $("#fytBtn").attr("disabled", "disabled");
       $("#fytBtn").toggleClass("disabled", true);
   } else if (enemyHP <= 0) {
     //Enemy has lost
+
+    var lastEnemyName = $("#enemyCharacter").children().children("h5").text();
+    
     $("#enemyCharacter")
       .children()
       .remove();
+
+      if(fightRound<2) {
+        $("#textResultCtnr").html("<div id=\"textResult\">You have defeated "+ lastEnemyName +"</div>"+
+      "</div><div id=\"textResult\">Choose your next enemy</div>");
+      }
+      else {
+        $("#textResultCtnr").html("<div id=\"textResult\">You have defeated "+ lastEnemyName +"</div>"+
+      "</div><div id=\"textResult\">Game Over!! You have Won!!</div>"+
+      "<button id=\"newGameBtn\" class=\"btn btn-primary\">"+"New Game</button>");
+      $("#newGameBtn").on("click", function(){
+        window.location.reload();
+      });
+      }
+      
+
       $(".backstage a").toggleClass("disabled", false);
       $("#fytBtn").attr("disabled", "disabled");
       $("#fytBtn").toggleClass("disabled", true);
-    fightRound++;
+      fightRound++;
   }
 }
 
@@ -129,7 +105,6 @@ $("a").on("click", function(event) {
     //choosing enemy character
     $("#fytBtn").removeAttr("disabled");
     $("#fytBtn").toggleClass("disabled");
-    console.log("enemy chosen");
     $(this).toggleClass("disabled", true);
     $(this)
       .parent()
@@ -153,6 +128,7 @@ $("a").on("click", function(event) {
         fight();
       });
       $("#titleLetter").text("Fight!");
+      resetPoints();
     } else if (fightRound == 1) {
       
       $(".backstage")
@@ -165,7 +141,8 @@ $("a").on("click", function(event) {
           .removeClass("col-xs-6")
           .addClass("col-xs-4")
       );
-      resetEnemyPoints();
+      resetPoints();
+      displayHealthPoints(urHP, enemyHP);
     } else if (fightRound == 2) {
       
       $("#enemyCharacter").append(
@@ -175,7 +152,8 @@ $("a").on("click", function(event) {
           .removeClass("col-xs-12")
           .addClass("col-xs-4")
       );
-      resetEnemyPoints();
+      resetPoints();
+      displayHealthPoints(urHP, enemyHP);
     }
 
     $(this).replaceWith('<div id="enemyCharacterLabel">Your Enemy<div>');
