@@ -1,9 +1,26 @@
 var yourCharChosen = false;
 var fightRound = 0;
 
-$("#fytBtnCtnr").on("click", function() {
-  fight();
-});
+function resetEnemyPoints() {
+  enemyCntrAttackPwr = $("#enemyCharacter")
+    .children()
+    .children("h5")
+    .data("counter-attack-power");
+
+    console.log($("#enemyCharacter")
+    .children()
+    .children("h5"));
+
+  enemyHP = $("#enemyCharacter")
+    .children()
+    .children("h5")
+    .data("health-points");
+
+
+  console.log("************ Resetting Enemy Points ***************");
+  console.log("Enemy Attack Power is " + enemyCntrAttackPwr);
+  console.log("Enemy Health Power is " + enemyHP);
+}
 
 function fight() {
   var urHP = $("#urCharacter")
@@ -66,17 +83,26 @@ function fight() {
   console.log("Enemy Attack Power is " + enemyCntrAttackPwr);
   console.log("Enemy Health Power is " + enemyHP);
 
+  $("#textResultCtnr").html("<div id=\"textResult\">"+"Your health is "+urHP+
+  "</div><div id=\"textResult\">"+"Enemy health is "+enemyHP+"</div>");
+
+  
+
   if (urHP <= 0) {
     //You have lost
     $("#urCharacter")
       .child()
       .remove();
+      $("#fytBtn").attr("disabled", "disabled");
+      $("#fytBtn").toggleClass("disabled", true);
   } else if (enemyHP <= 0) {
     //Enemy has lost
     $("#enemyCharacter")
       .children()
       .remove();
-    $(".backstage a").toggleClass("disabled", false);
+      $(".backstage a").toggleClass("disabled", false);
+      $("#fytBtn").attr("disabled", "disabled");
+      $("#fytBtn").toggleClass("disabled", true);
     fightRound++;
   }
 }
@@ -101,37 +127,60 @@ $("a").on("click", function(event) {
     yourCharChosen = true;
   } else {
     //choosing enemy character
+    $("#fytBtn").removeAttr("disabled");
+    $("#fytBtn").toggleClass("disabled");
+    console.log("enemy chosen");
     $(this).toggleClass("disabled", true);
     $(this)
       .parent()
       .parent()
       .removeClass("backstage");
-    
     if (fightRound == 0) {
-      $(".backstage")
-        .addClass("col-xs-6")
-        .removeClass("col-xs-4");
-      $(this).replaceWith('<div id="enemyCharacterLabel">Your Enemy<div>');
-      $("#fytBtnCtnr").append(
-        '<a id="fytBtn" class="btn btn-danger">Fight</a>'
-      );
-      $("#titleLetter").text("Fight!");
       $("#enemyCharacter").append(
         $(this)
           .parent()
           .parent()
+          .removeClass("backstage")
       );
+
+      $(".backstage")
+        .addClass("col-xs-6")
+        .removeClass("col-xs-4");
+      $("#fytBtnCtnr").append(
+        '<button id="fytBtn" class="btn btn-danger">Fight</button>'
+      );
+      $("button#fytBtn").on("click", function() {
+        fight();
+      });
+      $("#titleLetter").text("Fight!");
     } else if (fightRound == 1) {
-        $(".backstage")
+      
+      $(".backstage")
         .addClass("col-xs-12")
         .removeClass("col-xs-6");
-        $("#enemyCharacter").append(
-            $(this)
-              .parent()
-              .parent().removeClass("col-xs-6").addClass("col-xs-4")
-          );
+      $("#enemyCharacter").append(
+        $(this)
+          .parent()
+          .parent()
+          .removeClass("col-xs-6")
+          .addClass("col-xs-4")
+      );
+      resetEnemyPoints();
+    } else if (fightRound == 2) {
+      
+      $("#enemyCharacter").append(
+        $(this)
+          .parent()
+          .parent()
+          .removeClass("col-xs-12")
+          .addClass("col-xs-4")
+      );
+      resetEnemyPoints();
     }
 
+    $(this).replaceWith('<div id="enemyCharacterLabel">Your Enemy<div>');
     $(".backstage a").toggleClass("disabled", true);
   }
 });
+
+
