@@ -6,6 +6,11 @@ var urAttackPwr = 0;
 var enemyCntrAttackPwr = 0;
 var enemyHP = 0;
 
+// TO DO
+
+// 1. Modularize the code
+// 2. Add to Portfolio
+
 function resetPoints() {
   urHP = $("#urCharacter").children().children("h5").data("health-points");
   urBaseAttackPwr = $("#urCharacter").children().children("h5").data("base-attack-power");
@@ -33,14 +38,64 @@ function logEveryonesHealth() {
   console.log("Enemy Health Power is " + enemyHP);
 }
 
-function toggleFightBtn(isOff) {
-  if(isOff) {
+function toggleFightBtn(isOn) {
+  if(isOn) {
     $("#fytBtn").attr("disabled", "disabled");
     $("#fytBtn").toggleClass("disabled", true);
   } else {
     $("#fytBtn").removeAttr("disabled");
     $("#fytBtn").toggleClass("disabled");
   }
+}
+
+function updateScoreBoard(result,lastEnemyName){
+  if(result==="won") {
+    $("#textResultCtnr").html("<div id=\"textResult\">You have defeated "+ lastEnemyName +"</div>"+
+      "</div><div id=\"textResult\">Game Over!! You have Won!!</div><br>"+
+      "<button id=\"newGameBtn\" class=\"btn btn-primary\">"+"New Game</button>");
+  } else if(result==="lost") {
+    $("#textResultCtnr").html("<div id=\"textResult\">You have lost</div>"+
+    "<button id=\"newGameBtn\" class=\"btn btn-primary\">"+"New Game</button>");
+  } else {
+    $("#textResultCtnr").html("<div id=\"textResult\">You have defeated "+ lastEnemyName +"</div>"+
+      "</div><div id=\"textResult\">Choose your next enemy</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div>");
+  }
+}
+
+function addNewGameEvent() {
+  $("#newGameBtn").on("click", function(){
+    window.location.reload();
+  });
+}
+
+function isGameOver() {
+  if (enemyHP <= 0) {
+    //Enemy has lost
+
+    var lastEnemyName = $("#enemyCharacter").children().children("h5").text();
+    $("#enemyCharacter").children().remove();
+
+      if(fightRound<2) {
+        updateScoreBoard("inprogress",lastEnemyName);
+      }
+      else {
+       updateScoreBoard("won",lastEnemyName);
+       addNewGameEvent();
+      }
+      $(".backstage a").toggleClass("disabled", false);
+      toggleFightBtn(true);
+      fightRound++;
+  }
+  else if (urHP <= 0) {
+    //You have lost
+    updateScoreBoard("lost",lastEnemyName);
+    addNewGameEvent();
+    toggleFightBtn(true);
+  }
+}
+
+function resizeContainers(elem, from, to) {
+  return elem.removeClass(from).addClass(to);
 }
 
 function fight() {
@@ -53,69 +108,35 @@ function fight() {
   $("#urCharacter").children().children("h5").data("base-attack-power", urBaseAttackPwr + urAttackPwr);
 
   resetPoints();
+
   console.log("************ After deduction ***************");
+
   logEveryonesHealth();
   displayHealthPoints(urHP,enemyHP);
 
-
-
-  if (enemyHP <= 0) {
-    //Enemy has lost
-
-    var lastEnemyName = $("#enemyCharacter").children().children("h5").text();
-
-    $("#enemyCharacter").children().remove();
-
-      if(fightRound<2) {
-        $("#textResultCtnr").html("<div id=\"textResult\">You have defeated "+ lastEnemyName +"</div>"+
-      "</div><div id=\"textResult\">Choose your next enemy</div><div>&nbsp;</div><div>&nbsp;</div><div>&nbsp;</div>");
-      }
-      else {
-        $("#textResultCtnr").html("<div id=\"textResult\">You have defeated "+ lastEnemyName +"</div>"+
-      "</div><div id=\"textResult\">Game Over!! You have Won!!</div><br>"+
-      "<button id=\"newGameBtn\" class=\"btn btn-primary\">"+"New Game</button>");
-      $("#newGameBtn").on("click", function(){
-        window.location.reload();
-      });
-      }
-
-
-      $(".backstage a").toggleClass("disabled", false);
-
-      toggleFightBtn(true);
-      fightRound++;
-  }
-  else if (urHP <= 0) {
-    //You have lost
-
-    $("#textResultCtnr").html("<div id=\"textResult\">You have lost</div>"+
-    "<button id=\"newGameBtn\" class=\"btn btn-primary\">"+"New Game</button>");
-
-    $("#newGameBtn").on("click", function(){
-      window.location.reload();
-    });
-
-      toggleFightBtn(true);
-  }
+  isGameOver();
 }
 
 $("a").on("click", function(event) {
+
+  var currentContainer = $(this).parent().parent();
   if (!yourCharChosen) {
     //choosing your character
     $(this).toggleClass("disabled", true);
-    $("#urCharacter").append($(this).parent().parent().removeClass("backstage").addClass("col-xs-4").removeClass("col-xs-3"));
+    currentContainer.removeClass("backstage");
+    resizeContainers(currentContainer,"col-xs-3","col-xs-4")
+    $("#urCharacter").append(currentContainer);
     $("#titleLetter").text("Choose enemy character");
-    $(".backstage").addClass("col-xs-4").removeClass("col-xs-3");
+    resizeContainers($(".backstage"),"col-xs-3","col-xs-4");
     $(this).replaceWith('<div id="urCharacterLabel">Your Character<div>');
     yourCharChosen = true;
   } else {
     //choosing enemy character
-    toggleFightBtn(false);
     $(this).toggleClass("disabled", true);
-    $(this).parent().parent().removeClass("backstage");
+    currentContainer.removeClass("backstage");
     if (fightRound == 0) {
-      $("#enemyCharacter").append($(this).parent().parent());
-      $(".backstage").addClass("col-xs-6").removeClass("col-xs-4");
+      $("#enemyCharacter").append(currentContainer);
+      resizeContainers($(".backstage"),"col-xs-4", "col-xs-6");
       $("#fytBtnCtnr").append(
         '<button id="fytBtn" class="btn btn-danger">Fight</button>'
       );
@@ -126,16 +147,19 @@ $("a").on("click", function(event) {
       resetPoints();
       displayHealthPoints();
     } else if (fightRound == 1) {
-      $(".backstage").addClass("col-xs-12").removeClass("col-xs-6");
-      $("#enemyCharacter").append($(this).parent().parent().removeClass("col-xs-6").addClass("col-xs-4"));
+      toggleFightBtn(false);
+      resizeContainers($(".backstage"),"col-xs-6","col-xs-12");
+      resizeContainers(currentContainer,"col-xs-6","col-xs-4")
+      $("#enemyCharacter").append(currentContainer);
       resetPoints();
       displayHealthPoints();
     } else if (fightRound == 2) {
-      $("#enemyCharacter").append($(this).parent().parent().removeClass("col-xs-12").addClass("col-xs-4"));
+      toggleFightBtn(false);
+      resizeContainers(currentContainer,"col-xs-12","col-xs-4")
+      $("#enemyCharacter").append(currentContainer);
       resetPoints();
       displayHealthPoints();
     }
-
     $(this).replaceWith('<div id="enemyCharacterLabel">Your Enemy<div>');
     $(".backstage a").toggleClass("disabled", true);
   }
